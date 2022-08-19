@@ -2,16 +2,24 @@
   <org-chart
     :datasource="ds"
     @node-click="selectNode"
+    :background="true"
+    :zoom="true"
+    :zoomInLimit="7"
+    :zoomOutLimit="0.5"
   ></org-chart>
+  <show-detail :datasource="nodeData" :show="show" @showToast="hideToast" />
 </template>
 
 <script>
 import OrgChart from "./components/OrganizationChartContainer.vue";
+import NodeDetailToast from "./components/NodeDetailToast.vue";
+import "../dist/orgchart.css";
 
 export default {
   name: "App",
   components: {
     OrgChart,
+    "show-detail": NodeDetailToast,
   },
   data() {
     return {
@@ -42,12 +50,25 @@ export default {
           { id: "9", name: "Chun Miao", title: "department manager" },
         ],
       },
+      nodeData: {},
+      show: "hide",
     };
   },
   methods: {
     selectNode(nodeData) {
-      alert("node " + nodeData.name + " is selected");
+      this.nodeData = nodeData;
+      console.log(nodeData);
+      this.show = "show";
+    },
+    hideToast() {
+      this.show = "hide";
     },
   },
 };
 </script>
+
+<style>
+#app {
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+}
+</style>
