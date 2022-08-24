@@ -1,5 +1,5 @@
 <template>
-  <table class="table">
+  <table class="charttable">
     <tbody>
       <tr>
         <td
@@ -9,51 +9,79 @@
               : null
           "
         >
-          <div
-            class="chartNode"
-            style="min-width: 9rem"
-            :id="datasource.id"
-            @click.stop="handleClick(datasource)"
-          >
+          <div class="chartNode" style="min-width: 9rem" :id="datasource.id">
             <slot :node-data="datasource">
               <div class="chartTitle">
-                <p style="margin-left: 0.5rem; margin-right: 0.5rem">
+                <p>
                   {{ datasource.name }}
                 </p>
               </div>
               <div class="chartContent">
-                <p style="margin-left: 0.5rem; margin-right: 0.5rem">
+                <p>
                   {{ datasource.title }}
                 </p>
+              </div>
+
+              <div>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button
+                    type="button"
+                    class="btn btn-xs btn-outline-secondary"
+                    @click.stop="handleClick(datasource)"
+                    id="showToastPlacement"
+                  >
+                    <span class="fa fa-eye"></span>
+                  </button>
+                  <button
+                    v-if="datasource.children && datasource.children.length"
+                    type="button"
+                    class="btn btn-xs btn-outline-secondary"
+                    @click.stop="toggleCollapse"
+                  >
+                    <span class="fa fa-chevron-down"></span>
+                  </button>
+                </div>
               </div>
             </slot>
           </div>
         </td>
       </tr>
       <template v-if="datasource.children && datasource.children.length">
-        <tr class="chartLines">
-          <td :colspan="datasource.children.length * 2">
-            <div class="chartDownLine"></div>
-          </td>
-        </tr>
-        <tr class="chartLines">
-          <td class="chartRightLine"></td>
-          <template v-for="n in datasource.children.length - 1" v-bind:key="n">
-            <td class="chartLeftLine chartTopLine"></td>
-            <td class="chartRightLine chartTopLine"></td>
-          </template>
-          <td class="chartLeftLine"></td>
-        </tr>
+        <Transition>
+          <tr class="chartLines" v-show="!collapse">
+            <td :colspan="datasource.children.length * 2">
+              <div class="chartDownLine"></div>
+            </td>
+          </tr>
+        </Transition>
+        <Transition>
+          <tr class="chartLines" v-show="!collapse">
+            <td class="chartRightLine"></td>
+            <template
+              v-for="n in datasource.children.length - 1"
+              v-bind:key="n"
+            >
+              <td class="chartLeftLine chartTopLine"></td>
+              <td class="chartRightLine chartTopLine"></td>
+            </template>
+            <td class="chartLeftLine"></td>
+          </tr>
+        </Transition>
         <tr class="nodes">
           <td colspan="2" v-for="child in datasource.children" :key="child.id">
-            <node :datasource="child" :handle-click="handleClick">
-              <template
-                v-for="slot in Object.keys($slots)"
-                v-slot:[slot]="scope"
+            <Transition>
+              <node
+                :datasource="child"
+                :handle-click="handleClick"
+                v-show="!collapse"
               >
-                <slot :name="slot" v-bind="scope" />
-              </template>
-            </node>
+                <template
+                  v-for="slot in Object.keys($slots)"
+                  v-slot:[slot]="scope"
+                >
+                  <slot :name="slot" v-bind="scope" />
+                </template> </node
+            ></Transition>
           </td>
         </tr>
       </template>
@@ -68,97 +96,27 @@ export default {
     datasource: Object,
     handleClick: Function,
   },
-  methods: {},
+  data() {
+    return {
+      collapse: false,
+    };
+  },
+  methods: {
+    toggleCollapse() {
+      this.collapse = !this.collapse;
+    },
+  },
 };
 </script>
 
-<style>
-.table {
-  margin-bottom: 0.5rem;
-  margin-left: auto;
-  margin-right: auto;
-  border-collapse: separate;
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
 }
 
-.chartNode {
-  box-sizing: border-box;
-  display: inline-flex;
-  flex-direction: column;
-  position: relative;
-  margin: 0 1px 2px 1px;
-  max-width: 20px;
-  border: 1px solid #f56868;
-  text-align: center;
-  transition-property: color, background-color, border-color,
-    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
-    backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-  border-radius: 0.35rem;
-}
-.chartNode:hover {
-  box-shadow: 0 0 5px #f56868;
-  cursor: default;
-  z-index: 20;
-}
-
-.chartTitle {
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: bold;
-  line-height: 1.25rem;
-  overflow: hidden;
-  white-space: nowrap;
-  background: #f56868;
-  color: white;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-}
-
-.chartContent {
-  box-sizing: border-box;
-  width: 100%;
-  height: 1.25rem;
-  font-size: 0.75rem;
-  line-height: 1rem;
-  border: #f56868;
-  text-align: center;
-  border-bottom-right-radius: 0.25rem;
-  border-bottom-left-radius: 0.25rem;
-  background: white;
-  color: black;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.chartLines {
-  height: 1.25rem;
-}
-
-.chartDownLine {
-  background: #f56868;
-  margin-left: auto;
-  margin-right: auto;
-  height: 1.25rem;
-  width: 0.125rem;
-  float: none;
-}
-
-.chartTopLine {
-  border-top-color: #f56868;
-  border-top-style: solid;
-  border-top-width: 2px;
-}
-
-.chartRightLine {
-  border-right-color: #f56868;
-  border-right-style: solid;
-  border-right-width: 1px;
-}
-
-.chartLeftLine {
-  border-left-color: #f56868;
-  border-left-style: solid;
-  border-left-width: 1px;
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

@@ -188,38 +188,3 @@ export default {
   },
 };
 </script>
-
-<style>
-p {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.chartOrgchartContainer {
-  position: relative;
-  display: inline-block;
-  border: 2px dashed lightgray;
-  border-radius: 0.25rem;
-  overflow: auto;
-  text-align: center;
-}
-
-.chartOrgchart {
-  box-sizing: border-box;
-  display: inline-block;
-  touch-action: none;
-  user-select: none;
-  border: 1px dashed white;
-  padding: 1.25rem;
-}
-
-.chartOrgchart table {
-  border-spacing: 0;
-}
-
-.chartOrgchart td {
-  text-align: center;
-  vertical-align: top;
-  padding: 0;
-}
-</style>
