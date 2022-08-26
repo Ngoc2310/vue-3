@@ -1,74 +1,49 @@
+
 <template>
-  <org-chart
-    :datasource="ds"
-    @node-click="selectNode"
-    :background="true"
+  <vo-edit
+    style="background: #fff"
+    :data="chartData"
+    :draggable="true"
+    :pan="true"
     :zoom="true"
-    :zoomInLimit="7"
-    :zoomOutLimit="0.5"
-  ></org-chart>
-  <show-detail :datasource="nodeData" :show="show" @showToast="hideToast" />
+  >
+  </vo-edit>
 </template>
 
 <script>
-import OrgChart from "./components/OrganizationChartContainer.vue";
-import NodeDetailToast from "./components/NodeDetailToast.vue";
-import "../dist/orgchart.css";
-
+import VoEdit from "./components/VoEdit.vue";
 export default {
-  name: "App",
-  components: {
-    OrgChart,
-    "show-detail": NodeDetailToast,
-  },
-  data() {
-    return {
-      ds: {
-        id: "1",
-        name: "Augustin Ribreau",
-        title: "director",
-        children: [
-          { id: "2", name: "Bo Miao", title: "department manager" },
-          {
-            id: "3",
-            name: "Su Miao",
-            title: "department manager",
-            children: [
-              { id: "4", name: "Tie Hua", title: "senior engineer" },
-              {
-                id: "5",
-                name: "Hei Hei",
-                title: "senior engineer",
-                children: [
-                  { id: "6", name: "Pang Pang", title: "engineer" },
-                  { id: "7", name: "Xiang Xiang", title: "UE engineer" },
-                ],
-              },
-            ],
-          },
-          { id: "8", name: "Hong Miao", title: "department manager" },
-          { id: "9", name: "Chun Miao", title: "department manager" },
-        ],
-      },
-      nodeData: {},
-      show: "hide",
+  components: { VoEdit },
+  created() {
+    this.chartData = {
+      name: "Lao Lao",
+      title: "general manager",
+      children: [
+        { name: "Bo Miao", title: "department manager" },
+        {
+          name: "Su Miao",
+          title: "department manager",
+          children: [
+            { name: "Tie Hua", title: "senior engineer" },
+            {
+              name: "Hei Hei",
+              title: "senior engineer",
+              children: [
+                { name: "Pang Pang", title: "engineer" },
+                { name: "Xiang Xiang", title: "UE engineer" },
+              ],
+            },
+          ],
+        },
+        { name: "Yu Jie", title: "department manager" },
+        { name: "Yu Li", title: "department manager" },
+        { name: "Hong Miao", title: "department manager" },
+        { name: "Yu Wei", title: "department manager" },
+        { name: "Chun Miao", title: "department manager" },
+        { name: "Yu Tie", title: "department manager" },
+      ],
     };
-  },
-  methods: {
-    selectNode(nodeData) {
-      this.nodeData = nodeData;
-      console.log(nodeData);
-      this.show = "show";
-    },
-    hideToast() {
-      this.show = "hide";
-    },
   },
 };
 </script>
-
-<style>
-#app {
-  font-family: Roboto, Helvetica, Arial, sans-serif;
-}
-</style>
+```
